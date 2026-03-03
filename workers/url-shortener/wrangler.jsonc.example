@@ -1,0 +1,13 @@
+{
+  "name": "url-shortener",
+  "main": "worker.js",
+  "compatibility_date": "2024-01-01",
+  // KV Namespace for storing URLs
+  // Copy this file to wrangler.jsonc and replace with your actual KV namespace ID
+  "kv_namespaces": [
+    {
+      "binding": "URL_STORE",
+      "id": "YOUR_KV_NAMESPACE_ID_HERE"
+    }
+  ]
+}

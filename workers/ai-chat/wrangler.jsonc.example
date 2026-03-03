@@ -1,0 +1,12 @@
+{
+  "name": "ai-chat-api",
+  "main": "src/worker.js",
+  "compatibility_date": "2024-01-01",
+  // Workers AI binding
+  // Copy this file to wrangler.jsonc
+  "ai": {
+    "binding": "AI"
+  }
+  // Enable Workers AI
+  // No additional configuration needed - it's included in your Cloudflare account!
+}

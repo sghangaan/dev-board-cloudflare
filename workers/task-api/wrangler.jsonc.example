@@ -1,0 +1,14 @@
+{
+  "name": "task-notes-api",
+  "main": "src/index.js",
+  "compatibility_date": "2024-01-01",
+  // D1 Database binding
+  // Copy this file to wrangler.jsonc and replace with your actual database_id
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "tasks-db",
+      "database_id": "YOUR_D1_DATABASE_ID_HERE"
+    }
+  ]
+}
