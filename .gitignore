@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.wrangler/
+.claude/
+
+# Cloudflare Worker configs with sensitive IDs
+workers/**/wrangler.jsonc
