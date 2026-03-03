@@ -1,37 +1,173 @@
-import Link from "next/link";
+"use client";
+
+import { useState, FormEvent } from "react";
+import "./shortener.css";
+
+interface ShortenedUrl {
+  shortUrl: string;
+  shortCode: string;
+  longUrl: string;
+}
 
 export default function URLShortener() {
-  return (
-    <div className="min-h-screen bg-white dark:bg-black">
-      <main className="max-w-4xl mx-auto px-6 py-12">
-        {/* Back Button */}
-        <Link
-          href="/"
-          className="inline-flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-8 transition-colors"
-        >
-          <span className="mr-2">←</span>
-          Back to Tutorials
-        </Link>
+  const [longUrl, setLongUrl] = useState('');
+  const [result, setResult] = useState<ShortenedUrl | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-        {/* Header */}
-        <div className="mb-12">
-          <div className="flex items-center gap-4 mb-4">
-            <span className="text-6xl">🔗</span>
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">
-                URL Shortener
-              </h1>
-              <p className="text-lg text-blue-600 dark:text-blue-400 font-medium">
-                Workers + KV
-              </p>
+  // Deployed Cloudflare Worker URL
+  const API_URL = 'https://url-shortener.sghangaan.workers.dev';
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const url = longUrl.trim();
+    if (!url) {
+      setError('Please enter a URL');
+      return;
+    }
+
+    // Validate URL
+    try {
+      new URL(url);
+    } catch (e) {
+      setError('Please enter a valid URL (include http:// or https://)');
+      return;
+    }
+
+    setError(null);
+    setResult(null);
+    setLoading(true);
+
+    try {
+      const response = await fetch(`${API_URL}/api/shorten`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setResult(data);
+      } else {
+        setError(data.error || 'Failed to shorten URL');
+      }
+    } catch (err: any) {
+      console.error('Error:', err);
+      setError('Network error. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const copyToClipboard = async () => {
+    if (!result) return;
+
+    try {
+      await navigator.clipboard.writeText(result.shortUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      // Fallback for older browsers
+      const input = document.createElement('input');
+      input.value = result.shortUrl;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  return (
+    <div className="shortener-page">
+      <div className="shortener-container">
+        <h1>⚡ URL Shortener</h1>
+        <p className="subtitle">
+          Powered by <span className="badge">Cloudflare Workers + KV</span>
+        </p>
+
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label htmlFor="longUrl">Enter your long URL</label>
+            <input
+              type="url"
+              id="longUrl"
+              value={longUrl}
+              onChange={(e) => setLongUrl(e.target.value)}
+              placeholder="https://example.com/very/long/url/here"
+              required
+            />
+          </div>
+
+          <button type="submit" className="btn-primary" disabled={loading}>
+            {loading ? 'Shortening...' : 'Shorten URL'}
+          </button>
+        </form>
+
+        {error && (
+          <div className="error-message">{error}</div>
+        )}
+
+        {result && (
+          <div className="result-card">
+            <h3>Your Short URL:</h3>
+            <div className="short-url-display">
+              <input
+                type="text"
+                value={result.shortUrl}
+                readOnly
+                onClick={(e) => (e.target as HTMLInputElement).select()}
+              />
+              <button
+                className={`copy-btn ${copied ? 'copied' : ''}`}
+                onClick={copyToClipboard}
+              >
+                {copied ? '✓ Copied!' : 'Copy'}
+              </button>
+            </div>
+            <div className="stats-section">
+              <div className="stats-item">
+                <strong>Original URL:</strong>
+                <br />
+                <span className="original-url">{result.longUrl}</span>
+              </div>
+              <div className="stats-item">
+                <strong>Short Code:</strong> {result.shortCode}
+              </div>
             </div>
           </div>
-          <p className="text-xl text-gray-600 dark:text-gray-400">
-            Build a URL shortening service with HTTP 301 redirects and global edge KV storage for sub-millisecond lookups
-          </p>
+        )}
+
+        {!result && !error && (
+          <div className="features-list">
+            <h3>Features:</h3>
+            <div className="feature-item">
+              <span className="feature-icon">⚡</span>
+              <span>Lightning-fast redirects with global KV storage</span>
+            </div>
+            <div className="feature-item">
+              <span className="feature-icon">🌍</span>
+              <span>Distributed across Cloudflare's edge network</span>
+            </div>
+            <div className="feature-item">
+              <span className="feature-icon">🔒</span>
+              <span>Secure and reliable URL shortening</span>
+            </div>
+            <div className="feature-item">
+              <span className="feature-icon">📊</span>
+              <span>Click tracking and analytics</span>
+            </div>
+          </div>
+        )}
+
+        <div className="footer">
+          Built with Cloudflare Workers + KV Storage
         </div>
-        
-      </main>
+      </div>
     </div>
   );
 }
