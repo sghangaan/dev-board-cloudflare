@@ -151,3 +151,5 @@ Never store secrets in:
 - [Cloudflare Security Best Practices](https://developers.cloudflare.com/workers/platform/security/)
 - [Managing Secrets in Workers](https://developers.cloudflare.com/workers/configuration/secrets/)
 - [git-secrets Tool](https://github.com/awslabs/git-secrets)
+
+- 
