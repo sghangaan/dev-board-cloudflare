@@ -17,7 +17,7 @@ export default function URLShortener() {
   const [copied, setCopied] = useState(false);
 
   // Deployed Cloudflare Worker URL
-  const API_URL = 'https://url-shortener.sghangaan.workers.dev';
+  const API_URL = process.env.NEXT_PUBLIC_URL_SHORTENER_API!;
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

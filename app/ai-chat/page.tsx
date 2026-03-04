@@ -55,7 +55,7 @@ export default function AIChat() {
   const messageInputRef = useRef<HTMLTextAreaElement>(null);
 
   // Deployed Cloudflare Worker URL
-  const API_URL = 'https://ai-chat-api.sghangaan.workers.dev';
+  const API_URL = process.env.NEXT_PUBLIC_AI_CHAT_API!;
 
   useEffect(() => {
     loadMessages();

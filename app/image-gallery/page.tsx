@@ -32,7 +32,7 @@ export default function ImageGallery() {
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   // Deployed Cloudflare Worker URL
-  const API_URL = 'https://image-gallery-api.sghangaan.workers.dev';
+  const API_URL = process.env.NEXT_PUBLIC_IMAGE_GALLERY_API!;
 
   useEffect(() => {
     loadImages();

@@ -30,7 +30,7 @@ export default function TasksAPI() {
   const [submitting, setSubmitting] = useState(false);
 
   // Deployed Cloudflare Worker URL
-  const API_URL = 'https://task-notes-api.sghangaan.workers.dev';
+  const API_URL = process.env.NEXT_PUBLIC_TASK_API!;
 
   useEffect(() => {
     loadTasks();
