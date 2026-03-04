@@ -5,13 +5,17 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "pages:build": "next build",
+    "preview": "wrangler pages dev ./out",
+    "deploy": "wrangler pages deploy ./out",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "wrangler": "^3.96.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
